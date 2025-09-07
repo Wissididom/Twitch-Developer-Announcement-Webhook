@@ -1,0 +1,99 @@
+name: Build
+permissions:
+  "contents": "write"
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [windows-latest, macos-latest, ubuntu-latest]
+        dotnet-version: [ '8.0.x' ]
+
+    steps:
+      - uses: actions/checkout@v5
+      - name: Setup .NET SDK ${{ matrix.dotnet-version }}
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ matrix.dotnet-version }}
+      - name: Install dependencies
+        run: dotnet restore
+      - name: Build
+        run: dotnet build --configuration Release --no-restore
+      - name: Test
+        run: dotnet test --no-restore --verbosity normal
+      - name: Publish
+        run: dotnet publish --configuration Release --no-restore
+      - name: Compress (Ubuntu and macOS)
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          cd bin/Release/net8.0/linux-x64/publish
+          zip -r ../../../../../Twitch-Developer-Announcement-Webhook-${{ matrix.os }}.zip *
+          cd ../../../../..
+        shell: bash
+      - name: Compress (macOS)
+        if: matrix.os == 'macos-latest'
+        run: |
+          cd bin/Release/net8.0/osx-arm64/publish
+          zip -r ../../../../../Twitch-Developer-Announcement-Webhook-${{ matrix.os }}.zip *
+          cd ../../../../..
+        shell: bash
+      - name: Compress (Windows)
+        if: matrix.os == 'windows-latest'
+        run: Compress-Archive -Path bin/Release/net8.0/win-x64/publish/* -DestinationPath Chatterino-Nightly-Update-Checker-${{ matrix.os }}.zip
+        shell: pwsh
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Chatterino-Nightly-Update-Checker-${{ matrix.os }}
+          path: Chatterino-Nightly-Update-Checker-${{ matrix.os }}.zip
+  create-release:
+    needs: [build]
+    runs-on: ubuntu-latest
+    if: (github.event_name == 'push' && github.ref == 'refs/heads/main')
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0 # allows for tags access
+      - uses: actions/download-artifact@v5
+        name: Download Windows build
+        with:
+          name: Twitch-Developer-Announcement-Webhook-windows-latest
+          path: release-artifacts/
+      - uses: actions/download-artifact@v5
+        name: Download MacOS build
+        with:
+          name: Twitch-Developer-Announcement-Webhook-macos-latest
+          path: release-artifacts/
+      - uses: actions/download-artifact@v5
+        name: Download Ubuntu build
+        with:
+          name: Twitch-Developer-Announcement-Webhook-ubuntu-latest
+          path: release-artifacts/
+      - name: Create release
+        uses: ncipollo/release-action@v1.18.0
+        with:
+          replacesArtifacts: true
+          allowUpdates: true
+          artifactErrorsFailBuild: true
+          artifacts: "release-artifacts/*"
+          body: ${{ github.event.head_commit.message }}
+          prerelease: true
+          name: Nightly Release
+          tag: nightly-build
+      - name: Update nightly-build tag
+        run: |
+          git tag -f nightly-build
+          git push -f origin nightly-build
