@@ -35,7 +35,6 @@ jobs:
           ./build-macos.sh
           mkdir release-artifacts
       - name: Compress
-        if: matrix.os == 'ubuntu-latest'
         run: |
           zip -r release-artifacts/Twitch-Developer-Announcement-Webhook-linux-x64.zip bin/Release/net8.0/linux-x64/publish/*
           zip -r release-artifacts/Twitch-Developer-Announcement-Webhook-linux-musl-x64.zip bin/Release/net8.0/linux-musl-x64/publish/*
