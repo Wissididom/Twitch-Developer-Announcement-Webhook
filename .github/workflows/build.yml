@@ -67,21 +67,21 @@ jobs:
       - uses: actions/checkout@v5
         with:
           fetch-depth: 0 # allows for tags access
-      - uses: actions/download-artifact@v5
+      - uses: actions/download-artifact@v6
         name: Download Windows build
         with:
           name: Twitch-Developer-Announcement-Webhook-windows-latest
           path: release-artifacts/
       - name: Rename Windows build
         run: mv release-artifacts/Twitch-Developer-Announcement-Webhook-windows-latest.zip release-artifacts/Twitch-Developer-Announcement-Webhook-Windows.zip
-      - uses: actions/download-artifact@v5
+      - uses: actions/download-artifact@v6
         name: Download MacOS build
         with:
           name: Twitch-Developer-Announcement-Webhook-macos-latest
           path: release-artifacts/
       - name: Rename Mac build
         run: mv release-artifacts/Twitch-Developer-Announcement-Webhook-macos-latest.zip release-artifacts/Twitch-Developer-Announcement-Webhook-Mac.zip
-      - uses: actions/download-artifact@v5
+      - uses: actions/download-artifact@v6
         name: Download Ubuntu build
         with:
           name: Twitch-Developer-Announcement-Webhook-ubuntu-latest
