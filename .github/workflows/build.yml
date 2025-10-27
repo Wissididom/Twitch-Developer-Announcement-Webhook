@@ -55,7 +55,7 @@ jobs:
         run: Compress-Archive -Path bin/Release/net8.0/win-x64/publish/* -DestinationPath Twitch-Developer-Announcement-Webhook-${{ matrix.os }}.zip
         shell: pwsh
       - name: Upload artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: Twitch-Developer-Announcement-Webhook-${{ matrix.os }}
           path: Twitch-Developer-Announcement-Webhook-${{ matrix.os }}.zip
