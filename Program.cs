@@ -1,12 +1,9 @@
-﻿namespace TwitchDeveloperAnnouncementWebhook
-{
-    using System;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Xml;
-    using System.Text;
-    using System.Text.Json;
+﻿using System.Xml;
+using System.Text;
+using System.Text.Json;
 
+namespace TwitchDeveloperAnnouncementWebhook
+{
     public static class Program
     {
         private const string WebhookUsername = "Twitch Developer Announcement";

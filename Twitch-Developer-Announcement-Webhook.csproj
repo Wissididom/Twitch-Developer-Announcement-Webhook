@@ -5,7 +5,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <PublishSingleFile>true</PublishSingleFile>
     <SelfContained>true</SelfContained>
-    <RootNamespace>Twitch_Developer_Announcement_Webhook</RootNamespace>
+    <RootNamespace>TwitchDeveloperAnnouncementWebhook</RootNamespace>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
