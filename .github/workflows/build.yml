@@ -47,7 +47,7 @@ jobs:
           zip -r release-artifacts/Twitch-Developer-Announcement-Webhook-macos-x64.zip bin/Release/net8.0/osx-x64/publish/*
           zip -r release-artifacts/Twitch-Developer-Announcement-Webhook-macos-arm64.zip bin/Release/net8.0/osx-arm64/publish/*
       - name: Upload artifact
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: Twitch-Developer-Announcement-Webhook
           path: release-artifacts
